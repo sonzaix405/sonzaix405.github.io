@@ -4,10 +4,8 @@ import {
   Play, MonitorPlay, List, ImageOff, X
 } from 'lucide-react';
 
-// --- API CONFIGURATION ---
 const API_BASE = "https://api.sonzaix.indevs.in/melolo";
 
-// --- HELPER FUNCTIONS (Outside App) ---
 const processImageUrl = (url) => {
   if (!url) return '';
   if (url.includes('.heic')) {
@@ -17,12 +15,9 @@ const processImageUrl = (url) => {
   return url;
 };
 
-// --- SUB-COMPONENTS (Defined OUTSIDE App to prevent re-render focus loss) ---
-
 const Header = ({ toggleSidebar, setView, setActiveTag, searchQuery, setSearchQuery, handleSearch }) => (
   <header className="fixed top-0 left-0 right-0 h-14 bg-[#0f0f0f] flex items-center justify-between px-4 z-50 border-b border-[#272727]">
     <div className="flex items-center gap-2 md:gap-4 w-full">
-      {/* Menu Button */}
       <button 
           onClick={toggleSidebar} 
           className="p-2 hover:bg-[#272727] rounded-full text-white active:scale-90 transition-transform"
@@ -30,7 +25,6 @@ const Header = ({ toggleSidebar, setView, setActiveTag, searchQuery, setSearchQu
         <Menu size={24} />
       </button>
 
-      {/* Logo */}
       <div 
         className="flex items-center gap-1 cursor-pointer flex-shrink-0 mr-2 md:mr-0" 
         onClick={() => { setView('home'); setActiveTag('Semua'); }}
@@ -41,7 +35,6 @@ const Header = ({ toggleSidebar, setView, setActiveTag, searchQuery, setSearchQu
         <span className="text-white font-bold text-lg md:text-xl tracking-tighter hidden sm:block">MeloloTube</span>
       </div>
 
-      {/* Search Box - Responsive */}
       <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-2 md:mx-4 flex">
           <div className="flex w-full relative">
               <input
@@ -66,7 +59,6 @@ const Header = ({ toggleSidebar, setView, setActiveTag, searchQuery, setSearchQu
           </div>
       </form>
 
-      {/* User Icon */}
       <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
         A
       </div>
@@ -86,7 +78,6 @@ const SidebarItem = ({ icon, label, active, onClick, open }) => (
 
 const Sidebar = ({ isMobile, isSidebarOpen, setIsSidebarOpen, view, setView, setActiveTag }) => (
   <>
-      {/* Mobile Overlay */}
       {isMobile && isSidebarOpen && (
           <div 
               className="fixed inset-0 bg-black/50 z-40"
@@ -94,7 +85,6 @@ const Sidebar = ({ isMobile, isSidebarOpen, setIsSidebarOpen, view, setView, set
           />
       )}
 
-      {/* Sidebar Content */}
       <aside className={`
           fixed top-14 bottom-0 bg-[#0f0f0f] overflow-y-auto transition-all duration-300 z-50
           ${isMobile 
@@ -157,10 +147,7 @@ const DramaCard = ({ drama, handleCardClick }) => {
   );
 };
 
-// --- MAIN APP COMPONENT ---
-
 export default function App() {
-  // --- STATE MANAGEMENT ---
   const [view, setView] = useState('home'); 
   const [dramas, setDramas] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -169,13 +156,10 @@ export default function App() {
   const [dramaDetail, setDramaDetail] = useState(null);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [episodeList, setEpisodeList] = useState([]);
-  
-  // Sidebar State
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [activeTag, setActiveTag] = useState('Semua');
 
-  // --- RESPONSIVE CHECK ---
   useEffect(() => {
     const checkMobile = () => {
       if (window.innerWidth < 768) {
@@ -191,7 +175,6 @@ export default function App() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // --- API HANDLERS ---
   const fetchData = async (type, query = '') => {
     setLoading(true);
     setDramas([]);
@@ -252,12 +235,10 @@ export default function App() {
     }
   };
 
-  // --- EFFECTS ---
   useEffect(() => {
     if (view === 'home') fetchData('home');
     if (view === 'new') fetchData('new');
     if (view === 'populer') fetchData('populer');
-    // Note: 'search' view is handled manually by performSearch
   }, [view]);
 
   useEffect(() => {
@@ -266,7 +247,6 @@ export default function App() {
     }
   }, [view, selectedDramaId]);
 
-  // --- HANDLERS ---
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -274,7 +254,6 @@ export default function App() {
   };
 
   const performSearch = (query) => {
-    // Only fetch if view changes or query changes
     setView('search');
     setActiveTag(query);
     setSearchQuery(query);
@@ -308,7 +287,6 @@ export default function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // --- SUB-COMPONENT: DETAIL VIEW (Kept inside for prop simplicity, but safe from input bugs) ---
   const DetailView = () => {
     if (!dramaDetail && loading) {
         return (
@@ -322,9 +300,7 @@ export default function App() {
 
     return (
       <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
-        {/* Left Column: Player & Info */}
         <div className="flex-1">
-            {/* Player Container */}
             <div className="aspect-video bg-black rounded-xl overflow-hidden border border-[#303030] shadow-2xl mb-4 relative">
                 {currentVideo ? (
                     <video 
@@ -345,13 +321,12 @@ export default function App() {
                         />
                         <div className="z-10 text-center p-6 bg-black/60 rounded-xl backdrop-blur-md">
                             <h2 className="text-white text-xl font-bold mb-2">Pilih Episode untuk Memulai</h2>
-                            <p className="text-gray-300">Silakan pilih episode di daftar sebelah kanan (atau bawah).</p>
+                            <p className="text-gray-300">Silakan pilih episode di daftar sebelah kanan.</p>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Title & Description */}
             <div className="space-y-3">
                 <h1 className="text-2xl font-bold text-white">{dramaDetail.drama_name}</h1>
                 <div className="flex items-center gap-4 text-sm text-[#aaaaaa] border-b border-[#303030] pb-4">
@@ -377,7 +352,6 @@ export default function App() {
             </div>
         </div>
 
-        {/* Right Column: Episode List */}
         <div className="w-full lg:w-[400px] flex-shrink-0">
             <div className="bg-[#0f0f0f] border border-[#303030] rounded-xl overflow-hidden flex flex-col h-[calc(100vh-120px)] sticky top-20">
                 <div className="p-4 border-b border-[#303030] bg-[#1e1e1e] flex justify-between items-center">
@@ -417,7 +391,6 @@ export default function App() {
     );
   };
 
-  // --- MAIN RENDER ---
   return (
     <div className="bg-[#0f0f0f] min-h-screen font-sans text-gray-100">
       <Header 
@@ -437,15 +410,12 @@ export default function App() {
         setActiveTag={setActiveTag}
       />
 
-      {/* Main Content Area */}
       <main 
         className={`pt-14 transition-all duration-300 min-h-screen
             ${isMobile ? 'ml-0' : (isSidebarOpen ? 'ml-60' : 'ml-20')}
         `}
       >
         <div className="p-4 md:p-6 lg:p-8">
-          
-          {/* Tag Filter Bar */}
           {view !== 'detail' && (
              <div className="flex gap-3 mb-6 overflow-x-auto pb-2 scrollbar-hide sticky top-14 bg-[#0f0f0f] z-30 py-2">
                 {['Semua', 'Romantis', 'CEO', 'Balas Dendam', 'Fantasi', 'Komedi', 'Kerajaan', 'Sistem', 'Hamil'].map((tag, i) => (
@@ -463,7 +433,6 @@ export default function App() {
              </div>
           )}
 
-          {/* Conditional Views */}
           {view === 'search' && (
             <div className="mb-4">
                 <h2 className="text-xl font-bold text-white mb-4">Hasil: "{searchQuery}"</h2>
@@ -475,7 +444,6 @@ export default function App() {
           ) : (
             <>
               {loading ? (
-                // Skeleton Grid
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 gap-x-4">
                   {[...Array(10)].map((_, i) => (
                     <div key={i} className="flex flex-col gap-2 animate-pulse">
@@ -503,7 +471,6 @@ export default function App() {
         </div>
       </main>
 
-      {/* Mobile Bottom Nav */}
       {isMobile && (
           <div className="fixed bottom-0 left-0 right-0 bg-[#0f0f0f] border-t border-[#272727] flex justify-around p-2 z-50">
             <button onClick={() => { setView('home'); setActiveTag('Semua'); }} className={`flex flex-col items-center p-1 ${view === 'home' ? 'text-white' : 'text-gray-400'}`}>
